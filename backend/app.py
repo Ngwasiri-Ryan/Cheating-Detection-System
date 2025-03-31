@@ -5,11 +5,13 @@ import numpy as np
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import logging
-from typing import Tuple, Dict, List, Union
+from typing import Tuple, Dict, List, Optional
+from collections import defaultdict
+import json
 
 # Configure logging
 logging.basicConfig(
-    level=logging.DEBUG,
+    level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
         logging.FileHandler('cheating_detection.log'),
@@ -28,94 +30,232 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(MODEL_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
-# File paths
+# Model paths
 FACE_CASCADE_PATH = cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
 LANDMARK_PREDICTOR_PATH = os.path.join(MODEL_FOLDER, "shape_predictor_68_face_landmarks.dat")
 
-# Verify model files exist
-if not os.path.exists(FACE_CASCADE_PATH):
-    error_msg = f"OpenCV face cascade file not found at {FACE_CASCADE_PATH}"
-    logger.error(error_msg)
-    raise FileNotFoundError(error_msg)
-
-if not os.path.exists(LANDMARK_PREDICTOR_PATH):
-    error_msg = (
-        f"Facial landmark predictor not found at {LANDMARK_PREDICTOR_PATH}\n"
-        "Download from: http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2"
-    )
-    logger.error(error_msg)
-    raise FileNotFoundError(error_msg)
-else:
-    logger.info(f"Successfully found landmark predictor at {LANDMARK_PREDICTOR_PATH}")
-
 # Initialize detectors
 try:
-    logger.info("Initializing face cascade classifier...")
     face_cascade = cv2.CascadeClassifier(FACE_CASCADE_PATH)
-    if face_cascade.empty():
-        raise ValueError("Could not load face cascade classifier")
-    logger.info("Face cascade initialized successfully")
-except Exception as e:
-    error_msg = f"Error loading face cascade: {str(e)}"
-    logger.error(error_msg)
-    raise RuntimeError(error_msg)
-
-try:
-    logger.info("Initializing dlib detectors...")
     detector = dlib.get_frontal_face_detector()
     predictor = dlib.shape_predictor(LANDMARK_PREDICTOR_PATH)
-    logger.info("Dlib detectors initialized successfully")
 except Exception as e:
-    error_msg = f"Error initializing dlib detectors: {str(e)}"
-    logger.error(error_msg)
-    raise RuntimeError(error_msg)
+    logger.error(f"Initialization error: {str(e)}")
+    raise
 
-def validate_and_convert_frame(frame: np.ndarray) -> Union[np.ndarray, None]:
-    """Robust frame validation and conversion for dlib compatibility"""
+def validate_and_convert_frame(frame: np.ndarray) -> Optional[np.ndarray]:
+    """Ensure frame is in correct format for analysis"""
     if frame is None:
         return None
-
+        
     try:
-        # Ensure 8-bit depth (critical for dlib)
         if frame.dtype != np.uint8:
-            if np.issubdtype(frame.dtype, np.floating):
-                frame = (frame * 255).clip(0, 255).astype(np.uint8)
-            else:
-                frame = frame.astype(np.uint8)
-
-        # Handle all possible channel configurations
-        if len(frame.shape) == 2:  # Grayscale
-            frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
+            frame = frame.astype(np.uint8)
+            
+        if len(frame.shape) == 2:
+            frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2RGB)
         elif len(frame.shape) == 3:
-            if frame.shape[2] == 1:  # Single channel
-                frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
-            elif frame.shape[2] == 3:  # 3 channels
-                pass  # Assume BGR (OpenCV default)
-            elif frame.shape[2] == 4:  # RGBA
-                frame = cv2.cvtColor(frame, cv2.COLOR_RGBA2BGR)
-            else:
-                return None  # Unsupported channel count
-
-        # Final conversion to RGB for dlib
-        rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-        return rgb_frame
-
+            if frame.shape[2] == 1:
+                frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2RGB)
+            elif frame.shape[2] == 3:
+                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            elif frame.shape[2] == 4:
+                frame = cv2.cvtColor(frame, cv2.COLOR_RGBA2RGB)
+                
+        return frame
     except Exception as e:
         logger.error(f"Frame conversion error: {str(e)}")
         return None
 
+def analyze_single_frame(frame: np.ndarray) -> Optional[Dict]:
+    """Analyze a single keyframe"""
+    frame = validate_and_convert_frame(frame)
+    if frame is None:
+        return None
+        
+    try:
+        gray = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
+        results = {
+            'face_detections': 0,
+            'lookaway_count': 0,
+            'multiple_faces': False
+        }
+        
+        # OpenCV face detection
+        faces = face_cascade.detectMultiScale(
+            gray, 
+            scaleFactor=1.1, 
+            minNeighbors=5, 
+            minSize=(30, 30)
+        )
+        
+        # Dlib face detection
+        faces_dlib = detector(frame, 1)
+        
+        if len(faces) > 1 or len(faces_dlib) > 1:
+            results['multiple_faces'] = True
+            
+        for face in faces_dlib:
+            results['face_detections'] += 1
+            shape = predictor(frame, face)
+            
+            # Eye tracking
+            left_eye = shape.part(36)
+            right_eye = shape.part(45)
+            nose_left = shape.part(31)
+            nose_right = shape.part(35)
+            
+            if abs(left_eye.x - right_eye.x) < 0.6 * abs(nose_left.x - nose_right.x):
+                results['lookaway_count'] += 1
+                
+        return results
+        
+    except Exception as e:
+        logger.error(f"Frame analysis error: {str(e)}")
+        return None
+
+
+# [Previous imports and configuration remain the same until analyze_video_keyframes]
+
+def analyze_video_keyframes(video_path: str, keyframe_interval: int = 30) -> Tuple[bool, Dict]:
+    """Main analysis using keyframe extraction with detailed logging"""
+    cap = cv2.VideoCapture(video_path)
+    results = defaultdict(int)
+    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    processed_frames = 0
+    
+    # Log video properties
+    logger.info(f"Starting analysis of {video_path}")
+    logger.info(f"Total frames: {total_frames}, Keyframe interval: {keyframe_interval}")
+    logger.info(f"Video properties - {int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))}x{int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))} @ {cap.get(cv2.CAP_PROP_FPS):.2f}fps")
+    
+    frame_counter = 0
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
+            
+        frame_counter += 1
+        
+        # Only process keyframes (every N frames)
+        if frame_counter % keyframe_interval != 0:
+            continue
+            
+        logger.debug(f"Processing frame {frame_counter}/{total_frames}")
+        
+        frame_result = analyze_single_frame(frame)
+        if frame_result:
+            for k, v in frame_result.items():
+                results[k] += v
+            processed_frames += 1
+            
+            # Log frame-specific results
+            if frame_result['face_detections'] > 0:
+                logger.debug(f"Frame {frame_counter}: Detected {frame_result['face_detections']} face(s)")
+                if frame_result['lookaway_count'] > 0:
+                    logger.debug(f"Frame {frame_counter}: {frame_result['lookaway_count']} lookaway(s) detected")
+            else:
+                logger.debug(f"Frame {frame_counter}: No faces detected")
+            
+        # Early termination if cheating detected
+        if results.get('multiple_faces', False):
+            logger.warning("Early termination - Multiple faces detected")
+            break
+            
+    cap.release()
+    
+    results['total_frames'] = total_frames
+    results['processed_frames'] = processed_frames
+    
+    # Log summary before returning
+    logger.info(f"Analysis completed. Processed {processed_frames}/{total_frames} frames ({processed_frames/total_frames*100:.1f}%)")
+    logger.info(f"Total face detections: {results['face_detections']}")
+    logger.info(f"Total lookaways detected: {results['lookaway_count']}")
+    if results.get('multiple_faces', False):
+        logger.warning("Cheating detected: Multiple faces in frame")
+    
+    return compile_results(results)
+
+# [Rest of the code remains the same]
+
+def compile_results(raw_results: Dict) -> Tuple[bool, Dict]:
+    """Convert raw counts to final results"""
+    cheating_detected = False
+    reasons = []
+    
+    if raw_results.get('multiple_faces', False):
+        cheating_detected = True
+        reasons.append("Multiple faces detected")
+    
+    if raw_results['processed_frames'] > 0:
+        face_ratio = raw_results['face_detections'] / raw_results['processed_frames']
+        if face_ratio < 0.5:
+            cheating_detected = True
+            reasons.append("Low face detection rate")
+            
+        if raw_results['face_detections'] > 0:
+            lookaway_ratio = raw_results['lookaway_count'] / raw_results['face_detections']
+            if lookaway_ratio > 0.4:
+                cheating_detected = True
+                reasons.append("Excessive lookaways detected")
+    
+    return cheating_detected, {
+        'reasons': reasons if reasons else ["No cheating detected"],
+        'statistics': {
+            'total_frames': raw_results['total_frames'],
+            'processed_frames': raw_results['processed_frames'],
+            'processing_ratio': f"{(raw_results['processed_frames']/raw_results['total_frames'])*100:.1f}%",
+            'face_detection_rate': f"{(raw_results['face_detections']/raw_results['processed_frames'])*100:.1f}%" if raw_results['processed_frames'] > 0 else "0%"
+        }
+    }
+
+def is_video_valid(video_path: str) -> bool:
+    """Validate video file can be opened and has frames"""
+    cap = cv2.VideoCapture(video_path)
+    if not cap.isOpened():
+        return False
+    ret, _ = cap.read()
+    cap.release()
+    return ret
+
+def analyze_video_keyframes(video_path: str, keyframe_interval: int = 30) -> Tuple[bool, Dict]:
+    """Main analysis using keyframe extraction"""
+    cap = cv2.VideoCapture(video_path)
+    results = defaultdict(int)
+    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    processed_frames = 0
+    
+    while True:
+        ret, frame = cap.read()
+        if not ret:
+            break
+            
+        # Only process keyframes (every N frames)
+        if cap.get(cv2.CAP_PROP_POS_FRAMES) % keyframe_interval != 0:
+            continue
+            
+        frame_result = analyze_single_frame(frame)
+        if frame_result:
+            for k, v in frame_result.items():
+                results[k] += v
+            processed_frames += 1
+            
+        # Early termination if cheating detected
+        if results.get('multiple_faces', False):
+            break
+            
+    cap.release()
+    
+    results['total_frames'] = total_frames
+    results['processed_frames'] = processed_frames
+    return compile_results(results)
+
 @app.route("/")
 def home() -> str:
-    """Root endpoint that returns a simple welcome message"""
-    return "AI Cheating Detection API"
+    return "AI Cheating Detection API (Keyframe Method)"
 
 @app.route("/upload", methods=["POST"])
 def upload_video() -> Tuple[Dict, int]:
-    """
-    Handle video file upload and process it for cheating detection
-    Returns:
-        JSON response with cheating detection results
-    """
     if "video" not in request.files:
         return jsonify({"error": "No video file uploaded"}), 400
 
@@ -123,145 +263,23 @@ def upload_video() -> Tuple[Dict, int]:
     if video_file.filename == "":
         return jsonify({"error": "Empty filename"}), 400
 
-    video_path = os.path.join(app.config["UPLOAD_FOLDER"], video_file.filename)
     try:
+        video_path = os.path.join(app.config["UPLOAD_FOLDER"], video_file.filename)
         video_file.save(video_path)
-        logger.info(f"Video saved successfully at {video_path}")
+        logger.info(f"Video saved to {video_path}")
         
-        # Log video properties
-        cap = cv2.VideoCapture(video_path)
-        logger.info(f"Video properties - Codec: {int(cap.get(cv2.CAP_PROP_FOURCC))}, "
-                   f"Width: {int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))}, "
-                   f"Height: {int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))}, "
-                   f"FPS: {cap.get(cv2.CAP_PROP_FPS)}")
-        cap.release()
-        
+        if not is_video_valid(video_path):
+            return jsonify({"error": "Invalid video file"}), 400
+            
+        cheating_detected, details = analyze_video_keyframes(video_path)
+        return jsonify({
+            "cheating_detected": cheating_detected,
+            "details": details,
+            "video_path": video_path
+        })
     except Exception as e:
-        logger.error(f"Error saving video: {str(e)}")
-        return jsonify({"error": f"Error saving video: {str(e)}"}), 500
-
-    cheating_detected, details = analyze_video(video_path)
-    return jsonify({
-        "cheating_detected": cheating_detected,
-        "details": details,
-        "video_path": video_path
-    })
-
-def analyze_video(video_path: str) -> Tuple[bool, Dict]:
-    """
-    Analyze video for cheating behavior using face detection and eye tracking
-    Args:
-        video_path: Path to the video file to analyze
-    Returns:
-        Tuple of (cheating_detected, details) where details contains detection statistics
-    """
-    cap = cv2.VideoCapture(video_path)
-    if not cap.isOpened():
-        logger.error("Could not open video file")
-        return False, {"error": "Could not open video file"}
-
-    frame_count = 0
-    face_detected_frames = 0
-    eye_lookaway_frames = 0
-    multiple_faces_detected = False
-    cheating_detected = False
-    reasons = []
-
-    try:
-        while True:
-            ret, frame = cap.read()
-            if not ret:
-                break
-
-            frame_count += 1
-            logger.debug(f"Processing frame {frame_count}")
-
-            # Validate and convert frame
-            frame = validate_and_convert_frame(frame)
-            if frame is None:
-                logger.warning(f"Skipping invalid frame {frame_count}")
-                continue
-
-            try:
-                # Convert to RGB for dlib operations
-                rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-                
-                # Convert to grayscale for OpenCV face detection
-                gray_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-                
-                # OpenCV face detection (grayscale)
-                faces = face_cascade.detectMultiScale(
-                    gray_frame, 
-                    scaleFactor=1.1, 
-                    minNeighbors=5, 
-                    minSize=(30, 30),
-                    flags=cv2.CASCADE_SCALE_IMAGE
-                )
-                
-                # Dlib face detection (RGB)
-                faces_dlib = detector(rgb_frame, 1)
-
-                if len(faces) > 1 or len(faces_dlib) > 1:
-                    multiple_faces_detected = True
-                    reasons.append("Multiple faces detected")
-
-                for face in faces_dlib:
-                    face_detected_frames += 1
-                    
-                    # Facial landmarks (RGB)
-                    shape = predictor(rgb_frame, face)
-                    
-                    # Eye tracking logic
-                    left_eye = shape.part(36)
-                    right_eye = shape.part(45)
-                    nose_left = shape.part(31)
-                    nose_right = shape.part(35)
-                    
-                    eye_distance = abs(left_eye.x - right_eye.x)
-                    nose_width = abs(nose_left.x - nose_right.x)
-                    
-                    if eye_distance < 0.6 * nose_width:
-                        eye_lookaway_frames += 1
-                        reasons.append("Eyes not centered")
-
-            except Exception as e:
-                logger.error(f"Error processing frame {frame_count}: {str(e)}")
-                continue
-
-            # Early termination conditions
-            if multiple_faces_detected:
-                cheating_detected = True
-                reasons = ["Multiple faces detected"]  # Override previous reasons
-                break
-
-            if frame_count >= 30:  # Analyze first 30 frames
-                face_ratio = face_detected_frames / frame_count
-                lookaway_ratio = eye_lookaway_frames / max(1, face_detected_frames)
-
-                if face_ratio < 0.5:
-                    cheating_detected = True
-                    reasons.append("Face not detected consistently")
-                    break
-
-                if lookaway_ratio > 0.4:
-                    cheating_detected = True
-                    reasons.append("Looking away too frequently")
-                    break
-
-    finally:
-        cap.release()
-    
-    if not reasons:
-        reasons.append("No cheating detected")
-
-    return cheating_detected, {
-        "reasons": list(set(reasons)),
-        "statistics": {
-            "total_frames": frame_count,
-            "face_detection_rate": face_detected_frames/frame_count if frame_count else 0,
-            "lookaway_ratio": eye_lookaway_frames/max(1, face_detected_frames)
-        }
-    }
+        logger.error(f"Error processing video: {str(e)}")
+        return jsonify({"error": f"Error processing video: {str(e)}"}), 500
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=5000, threaded=True)

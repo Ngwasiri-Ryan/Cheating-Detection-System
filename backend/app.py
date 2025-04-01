@@ -1,3 +1,4 @@
+
 import cv2
 import dlib
 import os
@@ -12,7 +13,6 @@ from datetime import datetime
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
@@ -33,7 +33,6 @@ os.makedirs(MODEL_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 # Model paths
-# Model paths
 FACE_CASCADE_PATH = cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
 LANDMARK_PREDICTOR_PATH = os.path.join(MODEL_FOLDER, "shape_predictor_68_face_landmarks.dat")
 
@@ -46,17 +45,12 @@ try:
 except Exception as e:
     logger.error(f"Initialization error: {str(e)}")
     raise
-    logger.error(f"Initialization error: {str(e)}")
-    raise
 
-def validate_and_convert_frame(frame: np.ndarray) -> Optional[np.ndarray]:
-    """Ensure frame is in correct format for analysis"""
 def validate_and_convert_frame(frame: np.ndarray) -> Optional[np.ndarray]:
     """Ensure frame is in correct format for analysis"""
     if frame is None:
         logger.warning("Received None frame")
         return None
-        
         
     try:
         if frame.dtype != np.uint8:
@@ -64,19 +58,7 @@ def validate_and_convert_frame(frame: np.ndarray) -> Optional[np.ndarray]:
             
         if len(frame.shape) == 2:
             frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2RGB)
-            frame = frame.astype(np.uint8)
-            
-        if len(frame.shape) == 2:
-            frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2RGB)
         elif len(frame.shape) == 3:
-            if frame.shape[2] == 1:
-                frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2RGB)
-            elif frame.shape[2] == 3:
-                frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            elif frame.shape[2] == 4:
-                frame = cv2.cvtColor(frame, cv2.COLOR_RGBA2RGB)
-                
-        return frame
             if frame.shape[2] == 1:
                 frame = cv2.cvtColor(frame, cv2.COLOR_GRAY2RGB)
             elif frame.shape[2] == 3:
@@ -349,4 +331,5 @@ def upload_video() -> Tuple[Dict, int]:
 
 if __name__ == "__main__":
     logger.info("Starting cheating detection API server")
-    app.run(host='0.0.0.0', port=5000, threaded=True)
+    app.run(host='0.0.0.0', port=5000, threaded=True) 
+    

@@ -309,3 +309,41 @@
 2025-04-01 09:51:38,410 - WARNING - Cheating detected: Multiple faces in video
 2025-04-01 09:51:38,413 - INFO - Analysis completed for uploads\9490529-uhd_2160_3840_25fps.mp4
 2025-04-01 09:51:38,417 - INFO - 127.0.0.1 - - [01/Apr/2025 09:51:38] "POST /upload HTTP/1.1" 200 -
+2025-04-01 10:15:53,009 - INFO - Video saved to uploads\9490529-uhd_2160_3840_25fps.mp4
+2025-04-01 10:15:53,087 - INFO - Video validation - Resolution: 2160x3840, FPS: 25.00, Frames: 343
+2025-04-01 10:15:53,359 - INFO - 
+==================================================
+2025-04-01 10:15:53,359 - INFO - Starting analysis of uploads\9490529-uhd_2160_3840_25fps.mp4
+2025-04-01 10:15:53,359 - INFO - Resolution: 2160x3840
+2025-04-01 10:15:53,360 - INFO - FPS: 25.00, Duration: 13.72 seconds
+2025-04-01 10:15:53,360 - INFO - Total frames: 343, Keyframe interval: 30
+2025-04-01 10:15:53,360 - INFO - ==================================================
+
+2025-04-01 10:16:06,722 - INFO - Frame 30 - OpenCV faces: 1, Dlib faces: 1
+2025-04-01 10:16:19,354 - INFO - Frame 60 - OpenCV faces: 0, Dlib faces: 0
+2025-04-01 10:16:32,151 - INFO - Frame 90 - OpenCV faces: 0, Dlib faces: 1
+2025-04-01 10:16:45,118 - INFO - Frame 120 - OpenCV faces: 0, Dlib faces: 1
+2025-04-01 10:16:58,011 - INFO - Frame 150 - OpenCV faces: 2, Dlib faces: 1
+2025-04-01 10:16:58,011 - WARNING - Frame 150 - Multiple faces detected
+2025-04-01 10:16:58,018 - WARNING - Early termination at frame 150 - Multiple faces detected
+2025-04-01 10:16:58,060 - INFO - 
+==================================================
+2025-04-01 10:16:58,060 - INFO - ANALYSIS COMPLETED
+2025-04-01 10:16:58,061 - INFO - Processed 5 keyframes (1.5% of total)
+2025-04-01 10:16:58,061 - INFO - Face detections: 4
+2025-04-01 10:16:58,062 - INFO - Lookaways detected: 0
+2025-04-01 10:16:58,062 - INFO - Multiple faces detected: Yes
+2025-04-01 10:16:58,062 - INFO - ==================================================
+
+2025-04-01 10:16:58,062 - INFO - 
+==================================================
+2025-04-01 10:16:58,063 - INFO - VIDEO ANALYSIS SUMMARY
+2025-04-01 10:16:58,063 - INFO - Total frames: 343
+2025-04-01 10:16:58,063 - INFO - Processed frames: 5 (1.5%)
+2025-04-01 10:16:58,063 - INFO - Face detection rate: 80.0%
+2025-04-01 10:16:58,064 - INFO - Lookaway ratio: 0.00
+2025-04-01 10:16:58,064 - INFO - ==================================================
+
+2025-04-01 10:16:58,064 - WARNING - Cheating detected: Multiple faces in video
+2025-04-01 10:16:58,067 - INFO - Analysis completed for uploads\9490529-uhd_2160_3840_25fps.mp4
+2025-04-01 10:16:58,072 - INFO - 127.0.0.1 - - [01/Apr/2025 10:16:58] "POST /upload HTTP/1.1" 200 -

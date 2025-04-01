@@ -3,6 +3,7 @@ import "./VideoUpload.css";
 
 function VideoUpload() {
     const [file, setFile] = useState(null);
+    const [videoURL, setVideoURL] = useState(null);
     const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
 
@@ -12,6 +13,8 @@ function VideoUpload() {
             console.log("File selected:", selectedFile.name);
             setFile(selectedFile);
             setMessage(""); // Clear message when a new file is selected
+            const url = URL.createObjectURL(selectedFile);
+            setVideoURL(url);
         }
     };
 
@@ -54,8 +57,16 @@ function VideoUpload() {
 
     return (
         <div className="upload-container">
-            <h2>Upload a Video</h2>
+            <h2>Upload and Play Video</h2>
             <input type="file" accept="video/*" onChange={handleFileChange} />
+            {videoURL && (
+                <div className="video-preview">
+                    <video controls width="100%">
+                        <source src={videoURL} type="video/mp4" />
+                        Your browser does not support the video tag.
+                    </video>
+                </div>
+            )}
             <button onClick={uploadVideo} disabled={loading} className={loading ? "disabled-btn" : "upload-btn"}>
                 {loading ? "Uploading..." : "Upload"}
             </button>

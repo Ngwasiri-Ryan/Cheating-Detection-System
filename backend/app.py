@@ -71,6 +71,8 @@ def validate_and_convert_frame(frame: np.ndarray) -> Optional[np.ndarray]:
         logger.error(f"Frame conversion error: {str(e)}")
         return None
 
+
+
 def analyze_single_frame(frame: np.ndarray, frame_number: int) -> Optional[Dict]:
     """Analyze a single keyframe with detailed logging"""
     frame = validate_and_convert_frame(frame)

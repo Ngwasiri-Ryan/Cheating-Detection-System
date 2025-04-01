@@ -1,0 +1,12 @@
+2025-04-01 15:51:32,115 - INFO - Upload directory ready at C:\Users\ESHOP\Desktop\My Stuff\Final Year Project\cheating_detection_system\backend\uploads
+2025-04-01 15:51:32,142 - INFO - [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://192.168.2.166:5000
+2025-04-01 15:51:32,143 - INFO - [33mPress CTRL+C to quit[0m
+2025-04-01 15:51:44,576 - INFO - Saved file to C:\Users\ESHOP\Desktop\My Stuff\Final Year Project\cheating_detection_system\backend\uploads\0c8755e7d719476aad0d87e7d0f5b506.mp4
+2025-04-01 15:52:09,366 - WARNING - Multiple faces detected in frame 300
+2025-04-01 15:52:09,387 - INFO - 127.0.0.1 - - [01/Apr/2025 15:52:09] "POST /upload HTTP/1.1" 200 -
+2025-04-01 15:55:01,189 - INFO - Saved file to C:\Users\ESHOP\Desktop\My Stuff\Final Year Project\cheating_detection_system\backend\uploads\c29709c2f5444ef5992637f91b9c4835.mp4
+2025-04-01 15:55:23,766 - WARNING - Multiple faces detected in frame 300
+2025-04-01 15:55:23,786 - INFO - 127.0.0.1 - - [01/Apr/2025 15:55:23] "POST /upload HTTP/1.1" 200 -

@@ -13,9 +13,9 @@ class Config:
     LANDMARK_PREDICTOR_PATH = ""
     
     # Analysis parameters
-    KEYFRAME_INTERVAL = 30
-    LOOKAWAY_THRESHOLD = 0.4
-    FACE_DETECTION_THRESHOLD = 0.5
+    KEYFRAME_INTERVAL = 60
+    LOOKAWAY_THRESHOLD = 0.6
+    FACE_DETECTION_THRESHOLD = 0.3
 
     def __init__(self):
         """Initialize configuration with proper absolute paths"""

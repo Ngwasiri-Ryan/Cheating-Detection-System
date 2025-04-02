@@ -1,20 +1,45 @@
-import { useState } from "react";
-import "./VideoUpload.css";
+import { useState, useRef } from "react";
+import { useLogs } from "../context/LogsContext";
+import "../styles/VideoUpload.css";
+import placeholder from "../assets/placeholder.svg";
 
 function VideoUpload() {
     const [file, setFile] = useState(null);
     const [videoURL, setVideoURL] = useState(null);
-    const [message, setMessage] = useState("");
-    const [loading, setLoading] = useState(false);
+    const videoRef = useRef(null);
+    const { setMessage, setLoading, setVideoDetails } = useLogs();
 
     const handleFileChange = (event) => {
         const selectedFile = event.target.files?.[0];
         if (selectedFile) {
             console.log("File selected:", selectedFile.name);
             setFile(selectedFile);
-            setMessage(""); // Clear message when a new file is selected
+            setMessage(""); // Clear previous message
+            
+            // Revoke previous object URL
+            if (videoURL) {
+                URL.revokeObjectURL(videoURL);
+            }
+
             const url = URL.createObjectURL(selectedFile);
             setVideoURL(url);
+
+            setTimeout(() => {
+                const videoElement = videoRef.current;
+                if (videoElement) {
+                    videoElement.load();
+
+                    // Extract metadata once the video is loaded
+                    videoElement.onloadedmetadata = () => {
+                        const videoSize = (selectedFile.size / (1024 * 1024)).toFixed(2) + " MB"; // Convert bytes to MB
+                        setVideoDetails({
+                            name: selectedFile.name,
+                            duration: videoElement.duration.toFixed(2) + " seconds",
+                            size: videoSize,
+                        });
+                    };
+                }
+            }, 0);
         }
     };
 
@@ -57,21 +82,26 @@ function VideoUpload() {
 
     return (
         <div className="upload-container">
-            <h2>Upload and Play Video</h2>
-            <input type="file" accept="video/*" onChange={handleFileChange} />
-            {videoURL && (
-                <div className="video-preview">
-                    <video controls width="100%">
+            <div className="heading">Upload Video to Scan</div>
+            <label className="custom-file-upload">
+                <input type="file" accept="video/*" onChange={handleFileChange} />
+                📁 Choose Video
+            </label>
+
+            <div className="media-preview">
+                {videoURL ? (
+                    <video id="video-player" ref={videoRef} controls width="100%">
                         <source src={videoURL} type="video/mp4" />
                         Your browser does not support the video tag.
                     </video>
-                </div>
-            )}
-            <button onClick={uploadVideo} disabled={loading} className={loading ? "disabled-btn" : "upload-btn"}>
-                {loading ? "Uploading..." : "Upload"}
+                ) : (
+                    <img src={placeholder} alt="No Video Selected" className="placeholder-image" />
+                )}
+            </div>
+
+            <button onClick={uploadVideo} className="upload-btn">
+               Scan Video
             </button>
-            {loading && <div className="loader"></div>}
-            {message && <p className="message">{message}</p>}
         </div>
     );
 }

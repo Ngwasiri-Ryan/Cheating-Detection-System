@@ -1,0 +1,114 @@
+/* Parent grid container */
+.parent {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr); /* 12-column layout */
+    grid-template-rows: auto;
+    gap: 16px;
+    min-height: 50vh;
+    padding: 16px;
+    box-sizing: border-box;
+    margin: 0 4rem;
+  
+}
+
+/* Full-width top section */
+.div1 {
+    grid-column: span 12 / span 12;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    height: 60px;
+}
+
+/* Left-side menu under div1 */
+.div2 {
+    grid-column: span 3 / span 3; /* Left side */
+    grid-row: span 3 / span 3;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    padding: 6px;
+    height: 700px;
+}
+
+/* Right-side menu under div1 */
+.div4 {
+    grid-column: span 3 / span 3; /* Right side */
+    grid-row: span 3 / span 3;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    min-height: 400px;
+}
+
+/* Centered div */
+.div5 {
+    grid-column: span 6 / span 6; /* Takes 6 columns in center */
+    grid-row: span 3 / span 3;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    height: 100px;
+}
+
+/* Directly below div5 */
+.div3 {
+    grid-column: span 6 / span 6; /* Same width as div5 */
+    grid-row: span 2 / span 2;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    height: 600px;
+}
+
+/* Responsive Layout for Tablets */
+@media (max-width: 992px) {
+    .parent {
+        grid-template-columns: repeat(8, 1fr);
+    }
+    .div1 {
+        grid-column: span 8 / span 8;
+    }
+    .div2, .div4 {
+        grid-column: span 2 / span 2; /* Narrower side menus */
+    }
+    .div5, .div3 {
+        grid-column: span 4 / span 4;
+    }
+}
+
+/* Responsive Layout for Mobile Screens */
+@media (max-width: 768px) {
+    .parent {
+        grid-template-columns: repeat(4, 1fr);
+    }
+    .div1 {
+        grid-column: span 4 / span 4;
+    }
+    .div2, .div4 {
+        grid-column: span 4 / span 4; /* Stack the menus */
+        min-height: 150px;
+    }
+    .div5 {
+        grid-column: span 4 / span 4;
+    }
+    .div3 {
+        grid-column: span 4 / span 4;
+    }
+}
+
+/* Responsive Layout for Very Small Screens */
+@media (max-width: 480px) {
+    .parent {
+        grid-template-columns: 1fr; /* 1-column layout */
+    }
+    .div1, .div2, .div3, .div4, .div5 {
+        grid-column: span 1 / span 1;
+    }
+}

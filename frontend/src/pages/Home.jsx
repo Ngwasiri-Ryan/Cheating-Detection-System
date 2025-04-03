@@ -3,6 +3,7 @@ import Header from "../components/Header";
 import Menu from "../components/Menu";
 import History from "../components/History";
 import VideoRecorder from "../components/VideoRecorder";
+import Chatbot from "../components/Chatbot";
 import VideoUpload from "../components/VideoUpload";
 import Logs from "../components/Logs";
 import '../styles/Home.css'
@@ -23,7 +24,7 @@ const Home = () => {
     <VideoUpload/>
    </div>
    <div className="div4">
-    <History/>
+    <Chatbot/>
    </div>
    <div className="div5">
     <Logs/>

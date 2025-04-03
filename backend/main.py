@@ -18,6 +18,7 @@ from core.exceptions import (
     VideoProcessingError,
     FileSystemError
 )
+from chatbot.core.chatbot import Chatbot
 
 # Configure logging
 logging.basicConfig(
@@ -33,6 +34,7 @@ logger = logging.getLogger(__name__)
 def create_app(config: Config) -> Flask:
     app = Flask(__name__)
     CORS(app)
+    chatbot = Chatbot()
     
     try:
         # Initialize ML models
@@ -56,6 +58,13 @@ def create_app(config: Config) -> Flask:
     @app.route("/")
     def home() -> str:
         return "AI Cheating Detection API"
+
+    @app.route('/api/chat', methods=['POST'])
+    def chat():
+     data = request.get_json()
+     if not data or 'message' not in data:
+             return jsonify({"error": "Message required"}), 400
+     return jsonify(chatbot.get_response(data['message']))
 
     @app.route("/upload", methods=["POST"])
     def upload_video() -> Tuple[Dict, int]:

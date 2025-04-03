@@ -41,8 +41,8 @@
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    padding: 16px;
     min-height: 400px;
+    font-size: 14px;
 }
 
 /* Centered div */

@@ -1,0 +1,28 @@
+{
+    "intents": [
+      {
+        "tag": "data_export",
+        "patterns": [
+          "How to export data?",
+          "Where can I download reports?",
+          "Export options"
+        ],
+        "responses": [
+          "Go to Reports > Export in the app",
+          "You can download data from your profile section"
+        ]
+      },
+      {
+        "tag": "account_help",
+        "patterns": [
+          "Can't login",
+          "Password reset",
+          "Account problems"
+        ],
+        "responses": [
+          "Visit Settings > Account to reset credentials",
+          "Account recovery options are on login page"
+        ]
+      }
+    ]
+  }

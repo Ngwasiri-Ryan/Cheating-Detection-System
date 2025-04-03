@@ -1,27 +1,93 @@
 {
     "intents": [
+        {
+            "tag": "app_identity",
+            "patterns": [
+              "What is the name of the app?",
+              "What is this app called?",
+              "What's the app called?" 
+            ],
+            "responses": [
+              "The app is called CheapSniper, it ia an AI powered application used to detect cheating and impersonation",
+              "Dual detection system: OpenCV for quick scans, dlib for precise facial landmark analysis"
+            ]
+          },
       {
-        "tag": "data_export",
+        "tag": "detection_method",
         "patterns": [
-          "How to export data?",
-          "Where can I download reports?",
-          "Export options"
+          "How does face detection work?",
+          "What detection methods do you use?",
+          "Is this using OpenCV or dlib?",
+          "How are faces detected?"
         ],
         "responses": [
-          "Go to Reports > Export in the app",
-          "You can download data from your profile section"
+          "We use both OpenCV's Haar cascades and dlib's HOG detector for redundant face detection",
+          "Dual detection system: OpenCV for quick scans, dlib for precise facial landmark analysis"
         ]
       },
       {
-        "tag": "account_help",
+        "tag": "multiple_faces",
         "patterns": [
-          "Can't login",
-          "Password reset",
-          "Account problems"
+          "What happens if multiple faces appear?",
+          "Can you detect multiple people?",
+          "How does multi-face detection work?",
+          "What counts as multiple faces?"
         ],
         "responses": [
-          "Visit Settings > Account to reset credentials",
-          "Account recovery options are on login page"
+          "The system flags frames where either OpenCV or dlib detects more than one face",
+          "Multiple faces trigger an alert when detected by either detection algorithm"
+        ]
+      },
+      {
+        "tag": "lookaway_detection",
+        "patterns": [
+          "How do you detect looking away?",
+          "What's the eye/nose ratio?",
+          "How is gaze tracking calculated?",
+          "What counts as looking away?"
+        ],
+        "responses": [
+          "We compare eye distance to nose width - if eyes are <60% as wide as nose, it's a lookaway",
+          "Lookaway detected when eye spacing is significantly less than nose width"
+        ]
+      },
+      {
+        "tag": "frame_analysis",
+        "patterns": [
+          "What does frame analysis include?",
+          "What metrics do you track per frame?",
+          "What's in the frame results?",
+          "What do you analyze in each frame?"
+        ],
+        "responses": [
+          "Each frame analysis includes: face count, lookaway detection, and multi-face checks",
+          "We track: 1) Faces detected 2) Possible lookaways 3) Multiple faces per frame"
+        ]
+      },
+      {
+        "tag": "results_compilation",
+        "patterns": [
+          "How are final results calculated?",
+          "What determines cheating detection?",
+          "How do you compile frame data?",
+          "What makes you flag cheating?"
+        ],
+        "responses": [
+          "Final results combine: 1) Multi-face frames 2) Low face detection rate (<50%) 3) Excessive lookaways (>40%)",
+          "We flag cheating based on three factors from your code's compile_results() method"
+        ]
+      },
+      {
+        "tag": "error_handling",
+        "patterns": [
+          "What happens if analysis fails?",
+          "Do you handle frame errors?",
+          "What about failed frames?",
+          "How are errors logged?"
+        ],
+        "responses": [
+          "Failed frames raise FrameAnalysisError with frame number and error details",
+          "Errors are logged with frame numbers for debugging while processing continues"
         ]
       }
     ]

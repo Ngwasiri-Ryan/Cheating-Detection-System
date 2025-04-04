@@ -16,7 +16,7 @@
     grid-column: span 12 / span 12;
     background-color: white;
     border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); */
     justify-content: center;
     align-items: center;
     padding: 16px;
@@ -29,7 +29,7 @@
     grid-row: span 3 / span 3;
     background-color: white;
     border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); */
     padding: 6px;
     height: 700px;
 }
@@ -40,7 +40,7 @@
     grid-row: span 3 / span 3;
     background-color: white;
     border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); */
     min-height: 400px;
     font-size: 14px;
 }
@@ -51,7 +51,7 @@
     grid-row: span 3 / span 3;
     background-color: white;
     border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); */
     padding: 16px;
     height: 130px;
 }
@@ -62,7 +62,7 @@
     grid-row: span 2 / span 2;
     background-color: white;
     border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    /* box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); */
     padding: 16px;
     height: 600px;
 }

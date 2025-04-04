@@ -12,9 +12,9 @@ function Logs() {
             <div>
             {videoDetails ? (
                 <div className='videoDetails'>
-                    <div className='videoDetail'>{videoDetails.name}</div>
-                    <div className='videoDetail'>{videoDetails.duration}</div>
-                    <div className='videoDetail'>{videoDetails.size}</div>
+                    <div className='videoDetail'><strong>Name: </strong>{videoDetails.name}</div>
+                    <div className='videoDetail'><strong>Time: </strong>{videoDetails.duration}</div>
+                    <div className='videoDetail'><strong>Size: </strong>{videoDetails.size}</div>
                    
                 </div>
             ) : (

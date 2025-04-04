@@ -16,53 +16,46 @@ const Chatbot = () => {
 
   const sendMessage = async () => {
     if (!input.trim()) return;
-
-    const timestamp = new Date().toLocaleTimeString();
-    const userMessage = { id: Date.now().toString(), role: 'user', content: input, timestamp };
-    setMessages((prevMessages) => [...prevMessages, userMessage]);
+  
+    const userMessage = { 
+      id: Date.now().toString(), 
+      role: 'user', 
+      content: input, 
+      timestamp: new Date().toLocaleTimeString() 
+    };
+    setMessages(prev => [...prev, userMessage]);
     setInput('');
     setLoading(true);
     setBotTyping(true);
-
+  
     try {
-      const options = {
-        method: 'POST',
-        url: 'https://chatgpt-vision1.p.rapidapi.com/gpt4',
-        headers: {
-          'x-rapidapi-key': '7fd213d47emshb49cf8bd294a249p1de61ajsn820c90d640ca',
-          'x-rapidapi-host': 'chatgpt-vision1.p.rapidapi.com',
-          'Content-Type': 'application/json',
-        },
-        data: {
-          messages: [{ role: 'user', content: input }],
-          web_access: false,
-        },
+      const response = await axios.post('http://localhost:5000/api/chat', { 
+        message: input 
+      });
+  
+      // Ensure we're getting the expected response structure
+      console.log('API Response:', response.data);
+  
+      const botMessage = {
+        id: Date.now().toString() + '-bot',
+        role: 'bot',
+        content: response.data?.response || response.data?.message || 'No response',
+        tag: response.data?.tag,
+        timestamp: new Date().toLocaleTimeString()
       };
-
-      setTimeout(async () => {
-        const response = await axios.request(options);
-
-        const botMessage = {
-          id: Date.now().toString() + '-bot',
-          role: 'bot',
-          content: response.data.result || 'Sorry, I didn’t catch that.',
-          timestamp: new Date().toLocaleTimeString(),
-        };
-
-        setMessages((prevMessages) => [...prevMessages, botMessage]);
-        setBotTyping(false);
-      }, 2000); // Simulates typing delay
+  
+      setMessages(prev => [...prev, botMessage]);
     } catch (error) {
       console.error('API Error:', error);
-      setMessages((prevMessages) => [...prevMessages, {
+      setMessages(prev => [...prev, {
         id: Date.now().toString() + '-error',
         role: 'bot',
-        content: 'Something went wrong. Please try again.',
-        timestamp: new Date().toLocaleTimeString(),
+        content: error.response?.data?.error || error.message || 'Request failed',
+        timestamp: new Date().toLocaleTimeString()
       }]);
-      setBotTyping(false);
     } finally {
       setLoading(false);
+      setBotTyping(false);
     }
   };
 
@@ -76,16 +69,12 @@ const Chatbot = () => {
         </ClearButton>
       </ChatHeader>
       <MessageContainer>
-        {/* Display a default message if there are no messages */}
         {messages.length === 0 && (
           <DefaultMessage>
             <DefaultImage src={chatbotImg} alt="Chatbot" small />
-            <DefaultMessageText>
-              Start chatting with Sniperbot
-            </DefaultMessageText>
+            <DefaultMessageText>Start chatting with Sniperbot</DefaultMessageText>
           </DefaultMessage>
         )}
-        
         {messages.map((msg) => (
           <Message key={msg.id} role={msg.role} as={motion.div} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             {msg.role === 'bot' && <ProfileImage src={chatbotImg} alt="Chatbot" small />}
@@ -97,7 +86,6 @@ const Chatbot = () => {
           </Message>
         ))}
 
-        {/* Bot is typing indicator */}
         {botTyping && (
           <Message role="bot" as={motion.div} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <ProfileImage src={chatbotImg} alt="Chatbot" small />
@@ -110,13 +98,8 @@ const Chatbot = () => {
           </Message>
         )}
       </MessageContainer>
-
       <MessageInputContainer>
-        <MessageInput
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          placeholder="Type a message..."
-        />
+        <MessageInput value={input} onChange={(e) => setInput(e.target.value)} placeholder="Type a message..." />
         <SendButton onClick={sendMessage} as={motion.button} whileTap={{ scale: 0.9 }}>
           <FiSend size={20} />
         </SendButton>
@@ -133,7 +116,7 @@ const MessageContainer = styled.div`
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  max-height: 80%; /* Adjusted to limit the height of the chat */
+  max-height: 500px; /* Adjusted to limit the height of the chat */
   
   /* Styling the scrollbar */
   ::-webkit-scrollbar {
@@ -244,9 +227,12 @@ const MessageInputContainer = styled.div`
 
 const MessageInput = styled.input`
   flex: 1;
-  padding: 10px;
+  padding-top:20px;  
+  padding-bottom:20px; 
+  padding-left:10px;
+  padding-right:10px;
   border: none;
-  border-radius: 20px;
+  border-radius: 10px;
   background: #f1f1f1;
   outline: none;
 `;

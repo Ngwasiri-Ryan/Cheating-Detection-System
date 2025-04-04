@@ -1,94 +1,574 @@
 {
-    "intents": [
+ 
+  
+      "intents": [
         {
-            "tag": "app_identity",
-            "patterns": [
-              "What is the name of the app?",
-              "What is this app called?",
-              "What's the app called?" 
-            ],
-            "responses": [
-              "The app is called CheapSniper, it ia an AI powered application used to detect cheating and impersonation",
-              "Dual detection system: OpenCV for quick scans, dlib for precise facial landmark analysis"
-            ]
-          },
-      {
-        "tag": "detection_method",
-        "patterns": [
-          "How does face detection work?",
-          "What detection methods do you use?",
-          "Is this using OpenCV or dlib?",
-          "How are faces detected?"
-        ],
-        "responses": [
-          "We use both OpenCV's Haar cascades and dlib's HOG detector for redundant face detection",
-          "Dual detection system: OpenCV for quick scans, dlib for precise facial landmark analysis"
-        ]
-      },
-      {
-        "tag": "multiple_faces",
-        "patterns": [
-          "What happens if multiple faces appear?",
-          "Can you detect multiple people?",
-          "How does multi-face detection work?",
-          "What counts as multiple faces?"
-        ],
-        "responses": [
-          "The system flags frames where either OpenCV or dlib detects more than one face",
-          "Multiple faces trigger an alert when detected by either detection algorithm"
-        ]
-      },
-      {
-        "tag": "lookaway_detection",
-        "patterns": [
-          "How do you detect looking away?",
-          "What's the eye/nose ratio?",
-          "How is gaze tracking calculated?",
-          "What counts as looking away?"
-        ],
-        "responses": [
-          "We compare eye distance to nose width - if eyes are <60% as wide as nose, it's a lookaway",
-          "Lookaway detected when eye spacing is significantly less than nose width"
-        ]
-      },
-      {
-        "tag": "frame_analysis",
-        "patterns": [
-          "What does frame analysis include?",
-          "What metrics do you track per frame?",
-          "What's in the frame results?",
-          "What do you analyze in each frame?"
-        ],
-        "responses": [
-          "Each frame analysis includes: face count, lookaway detection, and multi-face checks",
-          "We track: 1) Faces detected 2) Possible lookaways 3) Multiple faces per frame"
-        ]
-      },
-      {
-        "tag": "results_compilation",
-        "patterns": [
-          "How are final results calculated?",
-          "What determines cheating detection?",
-          "How do you compile frame data?",
-          "What makes you flag cheating?"
-        ],
-        "responses": [
-          "Final results combine: 1) Multi-face frames 2) Low face detection rate (<50%) 3) Excessive lookaways (>40%)",
-          "We flag cheating based on three factors from your code's compile_results() method"
-        ]
-      },
-      {
-        "tag": "error_handling",
-        "patterns": [
-          "What happens if analysis fails?",
-          "Do you handle frame errors?",
-          "What about failed frames?",
-          "How are errors logged?"
-        ],
-        "responses": [
-          "Failed frames raise FrameAnalysisError with frame number and error details",
-          "Errors are logged with frame numbers for debugging while processing continues"
-        ]
-      }
-    ]
-  }
+          "tag": "app_greeting",
+          "patterns": ["Hi","Hello","Yo","Yoo","Salutations","Hello SniperBot","Hello Sniperbot"],
+          "responses": ["Hello there my name is SniperBot.I am a AI chatbot assistant for SniperBot application. Ask me questions concerning the app."]
+        },
+        {
+          "tag": "app_name",
+          "patterns": ["What is the name of the app?"],
+          "responses": ["The app is called CheapSniper."]
+        },
+        {
+          "tag": "app_purpose",
+          "patterns": [
+            "What is this app for?",
+            "What can the app do?",
+            "What is the app for?",
+            "What does this app do?",
+            "What's the purpose of this application?",
+            "Why would I use this app?",
+            "Can you explain what this does?",
+            "How is this app useful?",
+            "What problem does this solve?",
+            "What's the point of this software?",
+            "Why was this app created?",
+            "Wat dis app do?", 
+            "What's the main function?",
+            "What can I do with this?",
+            "Is this for exam monitoring?",
+            "Does this detect cheating?",
+            "Is this a proctoring tool?",
+            "Is this for online test security?",
+            "Does this catch cheaters?",
+            "How does this prevent cheating?",
+            "Is this like an exam watchdog?",
+            "Is this for catching impersonators?",
+            "Does this stop people from cheating?",
+            "Can this detect if someone else takes my test?",
+            "Will this know if I'm not the real test taker?",
+            "how prevent cheating?", 
+            "app purpose??" 
+          ],
+          "responses": [
+            "It's an AI-powered cheating detection system that monitors for suspicious activity during exams."
+          ]
+        },
+        
+        {
+          "tag": "app_developer",
+          "patterns": [
+            "Who made this app?",
+            "Who created CheapSniper?",
+            "Which company developed this?",
+            "Who's behind this application?",
+            "Who built this software?",
+            "Who are the developers?",
+            "What team made this?",
+            "Is this made by a company or individuals?",
+            "Who programmed this?",
+            "Who owns this app?",
+            "Who's responsible for this app?",
+            "Which developers created this?",
+            "Who should I credit for this?",
+            "Who wrote this code?",
+            "Who designed this system?",
+            "Who came up with this idea?",
+            "Who's the creator?",
+            "Who's the founder?",
+            "Who's the owner?",
+            "Who made dis?", 
+            "Who develop this??",  
+            "who created this app" 
+          ],
+          "responses": ["CheapSniper was developed by an AI security team."]
+        },
+        {
+          "tag": "app_pricing",
+          "patterns": [
+            "Is this app free?",
+            "Do I have to pay for this?",
+            "What's the cost?",
+            "Is there a charge?",
+            "Is this free to use?",
+            "Are there any fees?",
+            "What's the price?",
+            "How much does it cost?",
+            "Is there a subscription?",
+            "Do you offer a free version?",
+            "Is the basic version free?",
+            "Are premium features paid?",
+            "What's the pricing model?",
+            "Is there in-app purchases?",
+            "Are there hidden costs?",
+            "Is it completely free?",
+            "Free or paid?",
+            "Is dere a cost?", 
+            "its free??",  
+            "how much" 
+          ],
+          "responses": ["Currently it's free to use with basic features."]
+        },
+        {
+          "tag": "detection_technology",
+          "patterns": [
+            "What technology does this use?",
+            "How does this work technically?",
+            "What's under the hood?",
+            "Which libraries does this use?",
+            "What's the tech stack?",
+            "Is this machine learning?",
+            "Does this use AI?",
+            "What algorithms are used?",
+            "Is this based on OpenCV?",
+            "Do you use dlib?",
+            "What computer vision tech?",
+            "How is the face detection implemented?",
+            "What's the backend technology?",
+            "Which face detection model?",
+            "Is this deep learning?",
+            "What framework does this use?",
+            "Technical details please",
+            "Wat tech u using?", 
+            "technology??",  
+            "how it works" 
+          ],
+          "responses": ["We use OpenCV and dlib for facial analysis."]
+        },
+        {
+          "tag": "face_detection",
+          "patterns": [
+            "How does face detection work?",
+            "How do you detect faces?",
+            "What's the face detection method?",
+            "How are faces recognized?",
+            "What looks for faces?",
+            "How does it see my face?",
+            "What detects my face?",
+            "How does the camera know it's me?",
+            "How does it find faces?",
+            "What's the face finding algorithm?",
+            "How are faces identified?",
+            "What checks for faces?",
+            "How does it know there's a face?",
+            "What looks at facial features?",
+            "How does it spot faces?",
+            "What recognizes human faces?",
+            "How are faces picked up?",
+            "How face detection work?", 
+            "face detect??",  
+            "how see face" 
+          ],
+          "responses": ["It analyzes facial landmarks using computer vision."]
+        },
+        {
+          "tag": "multiple_faces",
+          "patterns": [
+            "Can it detect multiple people?",
+            "What if there's more than one person?",
+            "Does it see other faces?",
+            "Will it notice someone else?",
+            "Can it tell if someone joins me?",
+            "What about multiple test takers?",
+            "Does it flag extra people?",
+            "Can it spot a second person?",
+            "What if my friend is with me?",
+            "Does it detect groups?",
+            "Will it see people behind me?",
+            "Can it count faces?",
+            "Does it know how many people?",
+            "What if someone walks by?",
+            "Can it tell if I'm alone?",
+            "Does it monitor for collaborators?",
+            "What about team cheating?",
+            "Can see many people?", 
+            "multiple faces??",  
+            "what if others" 
+          ],
+          "responses": ["Yes, it flags frames with more than one face."]
+        },
+        {
+          "tag": "pets_detection",
+          "patterns": [
+            "Will my pet trigger detection?",
+            "What about cats and dogs?",
+            "Does it see animals?",
+            "Will my dog set it off?",
+            "What if my cat walks by?",
+            "Can it tell pets from people?",
+            "Does it ignore animals?",
+            "Will my bird trigger it?",
+            "What about pet interference?",
+            "Does it detect non-humans?",
+            "Can animals fool it?",
+            "Will my hamster be seen?",
+            "Does it recognize pets?",
+            "What if I have a service animal?",
+            "Can it tell I'm not a pet?",
+            "Does it filter out animals?",
+            "What about pet faces?",
+            "Pets set it off?", 
+            "animals??",  
+            "what if dog" 
+          ],
+          "responses": ["No, it only detects human-like faces."]
+        },
+        {
+          "tag": "sunglasses_handling",
+          "patterns": [
+            "What if I wear sunglasses?",
+            "Does it work with shades?",
+            "Can I wear sunglasses?",
+            "What about dark glasses?",
+            "Will shades block detection?",
+            "Do sunglasses interfere?",
+            "Can it see through glasses?",
+            "What if my glasses are mirrored?",
+            "Does it work with tinted lenses?",
+            "Can I wear sunglasses during test?",
+            "What about prescription sunglasses?",
+            "Do shades prevent detection?",
+            "Will it work if I wear shades?",
+            "Can it detect eyes through glasses?",
+            "What if my glasses are dark?",
+            "Does it need to see my eyes?",
+            "How dark can glasses be?",
+            "Sunglasses ok?", 
+            "shades??",  
+            "what if dark glasses" 
+          ],
+          "responses": ["Sunglasses may reduce detection accuracy."]
+        },
+        {
+          "tag": "lookaway_definition",
+          "patterns": [
+            "What counts as looking away?",
+            "How do you define looking away?",
+            "What's considered looking away?",
+            "When does it think I looked away?",
+            "How is lookaway determined?",
+            "What's the lookaway threshold?",
+            "How long before it's lookaway?",
+            "When am I flagged for looking away?",
+            "What constitutes looking away?",
+            "How does it know I looked away?",
+            "What's the lookaway rule?",
+            "How much can I look away?",
+            "What's the lookaway time limit?",
+            "When does lookaway start?",
+            "How is gaze deviation measured?",
+            "What's the lookaway sensitivity?",
+            "How strict is lookaway detection?",
+            "Lookaway how?", 
+            "looking away??",  
+            "what counts" 
+          ],
+          "responses": ["When your eyes move off-screen for more than 2 seconds."]
+        },
+        {
+          "tag": "blinking_handling",
+          "patterns": [
+            "Does blinking count as looking away?",
+            "What about normal blinking?",
+            "Will blinking trigger detection?",
+            "How does it handle blinks?",
+            "Are blinks ignored?",
+            "Does blinking affect detection?",
+            "Can it tell blinking from looking away?",
+            "What's the blink threshold?",
+            "How many blinks are allowed?",
+            "Does rapid blinking flag?",
+            "What if I blink a lot?",
+            "Are eye blinks monitored?",
+            "Does it track blinking?",
+            "How sensitive is it to blinks?",
+            "What's considered excessive blinking?",
+            "Can blinking look like cheating?",
+            "Does it distinguish blinking?",
+            "Blinks count?", 
+            "blinking??",  
+            "what if blink" 
+          ],
+          "responses": ["No, normal blinking is ignored."]
+        },
+        {
+          "tag": "glasses_compatibility",
+          "patterns": [
+            "I wear glasses - will it work?",
+            "Does it work with regular glasses?",
+            "What about prescription glasses?",
+            "Can I wear my normal glasses?",
+            "Does it detect through lenses?",
+            "Will my eyeglasses interfere?",
+            "What if I need glasses to see?",
+            "Does it work with vision correction?",
+            "Can it see through clear glasses?",
+            "Are reading glasses ok?",
+            "What about bifocals?",
+            "Do normal glasses affect it?",
+            "Will my spectacles cause issues?",
+            "Does it handle corrective lenses?",
+            "What if I wear glasses all the time?",
+            "Are glasses supported?",
+            "Vision glasses ok?",
+            "Glasses work?", 
+            "spectacles??",  
+            "what if wear glasses" 
+          ],
+          "responses": ["Yes, regular glasses don't affect detection."]
+        },
+        {
+          "tag": "notes_checking",
+          "patterns": [
+            "Can I look at my notes?",
+            "Is checking notes allowed?",
+            "What about quick glances?",
+            "Can I reference materials?",
+            "How much note checking is ok?",
+            "What if I need to look something up?",
+            "Can I peek at my notes?",
+            "Is brief reference permitted?",
+            "What's the rule on notes?",
+            "Can I have notes visible?",
+            "How strict is note checking?",
+            "What counts as cheating with notes?",
+            "Can I use a cheat sheet?",
+            "What about open book tests?",
+            "How does it handle note usage?",
+            "Can I glance at my book?",
+            "What if I need to check something?",
+            "Notes ok?", 
+            "cheat sheet??",  
+            "what if look at notes" 
+          ],
+          "responses": ["Brief glances are allowed, but prolonged lookaways are flagged."]
+        },
+        {
+          "tag": "accuracy_level",
+          "patterns": [
+            "How accurate is this?",
+            "What's the detection accuracy?",
+            "How reliable is it?",
+            "What's the error rate?",
+            "How often is it wrong?",
+            "What's the precision?",
+            "How good is the detection?",
+            "What percentage is accurate?",
+            "How trustworthy are results?",
+            "How many false positives?",
+            "What's the success rate?",
+            "How effective is it?",
+            "Does it make mistakes?",
+            "How precise is the monitoring?",
+            "What's the confidence level?",
+            "How dependable is it?",
+            "Can it be fooled?",
+            "Accurate how?", 
+            "reliability??",  
+            "how often wrong" 
+          ],
+          "responses": ["About 95% accurate with good lighting and camera."]
+        },
+        {
+          "tag": "flag_review",
+          "patterns": [
+            "Can I see what was flagged?",
+            "How do I view flags?",
+            "Is there a report of flags?",
+            "What feedback do I get?",
+            "Can I review detections?",
+            "How are flags presented?",
+            "What evidence is provided?",
+            "Can I check the alerts?",
+            "How do I know what triggered?",
+            "What details are in the report?",
+            "Can I see detection logs?",
+            "How transparent is flagging?",
+            "What proof of cheating is shown?",
+            "Can I see video evidence?",
+            "How are results displayed?",
+            "What's in the summary report?",
+            "Can I access flag details?",
+            "See flags how?", 
+            "report??",  
+            "what was flagged" 
+          ],
+          "responses": ["Yes, you'll receive a report after your session."]
+        },
+        {
+          "tag": "flag_consequences",
+          "patterns": [
+            "What happens if I'm flagged?",
+            "What are the consequences?",
+            "What if I get detected?",
+            "How serious are flags?",
+            "What penalties for flags?",
+            "What if the system catches me?",
+            "What's the punishment?",
+            "How are flags handled?",
+            "What follows a flag?",
+            "What's the flag process?",
+            "What if I trigger detection?",
+            "What's the disciplinary action?",
+            "How are violations treated?",
+            "What's the flag protocol?",
+            "What if I'm marked suspicious?",
+            "What's the next step after flag?",
+            "How are cases resolved?",
+            "Flagged then what?", 
+            "consequences??",  
+            "what if caught" 
+          ],
+          "responses": ["Your administrator will review the flagged moments."]
+        },
+        {
+          "tag": "processing_time",
+          "patterns": [
+            "How long does analysis take?",
+            "When do I get results?",
+            "What's the processing time?",
+            "How quick is the review?",
+            "When is the report ready?",
+            "How fast does it analyze?",
+            "What's the delay for results?",
+            "How soon are flags available?",
+            "What's the turnaround time?",
+            "Is analysis instant?",
+            "How long to process?",
+            "When can I see flags?",
+            "How much time to review?",
+            "Is there a waiting period?",
+            "How delayed is detection?",
+            "What's the evaluation time?",
+            "How long until I know?",
+            "Process fast?", 
+            "speed??",  
+            "how long wait" 
+          ],
+          "responses": ["Typically 2-5 minutes after session ends."]
+        },
+        {
+          "tag": "dispute_process",
+          "patterns": [
+            "Can I dispute a flag?",
+            "How do I appeal?",
+            "What if it's wrong?",
+            "Can I challenge detection?",
+            "How to contest flags?",
+            "What's the appeal process?",
+            "Can I argue false positives?",
+            "How to correct mistakes?",
+            "What if I disagree?",
+            "How are disputes handled?",
+            "Can I prove innocence?",
+            "What's the rebuttal process?",
+            "How to explain flags?",
+            "Can I provide context?",
+            "What if detection erred?",
+            "How to fix errors?",
+            "Can I request review?",
+            "Appeal how?", 
+            "dispute??",  
+            "what if wrong flag" 
+          ],
+          "responses": ["Yes, all flags can be reviewed and appealed."]
+        },
+        {
+          "tag": "internet_outage",
+          "patterns": [
+            "What if my internet disconnects?",
+            "What about connection drops?",
+            "How are outages handled?",
+            "What if I lose connection?",
+            "Does it work offline?",
+            "What about network issues?",
+            "How does it handle disconnects?",
+            "What if WiFi cuts out?",
+            "Can I resume after dropout?",
+            "What about temporary loss?",
+            "How are interruptions managed?",
+            "What if connection fails?",
+            "Does it save progress?",
+            "What about brief outages?",
+            "How does it recover?",
+            "What if signal is lost?",
+            "Can I reconnect?",
+            "Offline work?", 
+            "disconnect??",  
+            "what if internet gone" 
+          ],
+          "responses": ["The app will save progress and resume when reconnected."]
+        },
+        {
+          "tag": "webcam_requirements",
+          "patterns": [
+            "What webcams work best?",
+            "Which cameras are supported?",
+            "What's the minimum camera?",
+            "Does my webcam qualify?",
+            "What camera specs needed?",
+            "Which models work well?",
+            "What resolution required?",
+            "How good must my camera be?",
+            "What are the camera requirements?",
+            "Does built-in webcam work?",
+            "What about external cameras?",
+            "What's the ideal webcam?",
+            "How clear must video be?",
+            "What camera quality needed?",
+            "Does it need HD?",
+            "What about low-res cameras?",
+            "Can I use my phone camera?",
+            "Webcam specs?",  
+            "camera??",  
+            "what camera need" 
+          ],
+          "responses": ["HD webcams with at least 720p resolution."]
+        },
+        {
+          "tag": "lighting_requirements",
+          "patterns": [
+            "How much light do I need?",
+            "What's the lighting requirement?",
+            "How bright should it be?",
+            "What about dark rooms?",
+            "Does lighting affect detection?",
+            "How important is lighting?",
+            "What if my room is dim?",
+            "Can I use in low light?",
+            "What's the minimum brightness?",
+            "How well-lit must I be?",
+            "What about shadows?",
+            "Does backlighting matter?",
+            "What if light is behind me?",
+            "How does lighting help?",
+            "What's ideal lighting?",
+            "Can I use a lamp?",
+            "What about natural light?",
+            "Light how much?",  
+            "brightness??",  
+            "what if dark"  
+          ],
+          "responses": ["Well-lit environment without strong backlighting."]
+        },
+        {
+          "tag": "trial_test",
+          "patterns": [
+            "Can I test it first?",
+            "Is there a practice mode?",
+            "How to try before using?",
+            "Can I do a demo?",
+            "Is there a trial version?",
+            "How to practice with it?",
+            "Can I experiment first?",
+            "What about test runs?",
+            "How to check my setup?",
+            "Can I verify it works?",
+            "Is there a dry run?",
+            "How to familiarize myself?",
+            "Can I preview detection?",
+            "What about sample tests?",
+            "How to ensure it's working?",
+            "Can I do a check first?",
+            "What about practice exams?",
+            "Try first?",  
+            "demo??", 
+            "what if test run"  
+          ],
+          "responses": ["Yes, we recommend doing a practice session."]
+        }
+      ]
+}

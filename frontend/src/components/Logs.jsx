@@ -15,6 +15,7 @@ function Logs() {
                     <div className='videoDetail'>{videoDetails.name}</div>
                     <div className='videoDetail'>{videoDetails.duration}</div>
                     <div className='videoDetail'>{videoDetails.size}</div>
+                   
                 </div>
             ) : (
                 <p>No video uploaded yet.</p>

@@ -7,7 +7,7 @@ function VideoUpload() {
     const [file, setFile] = useState(null);
     const [videoURL, setVideoURL] = useState(null);
     const videoRef = useRef(null);
-    const { setMessage, setLoading, setVideoDetails } = useLogs();
+    const { setMessage, setLoading, setVideoDetails , setAnalysisDetails} = useLogs();
 
     const handleFileChange = (event) => {
         const selectedFile = event.target.files?.[0];
@@ -43,42 +43,44 @@ function VideoUpload() {
         }
     };
 
-    const uploadVideo = async () => {
-        if (!file) {
-            console.warn("⚠️ No file selected");
-            setMessage("⚠️ Please select a video file.");
-            return;
+  
+    // In your uploadVideo function:
+const uploadVideo = async () => {
+    if (!file) {
+        console.warn("⚠️ No file selected");
+        setMessage("⚠️ Please select a video file.");
+        return;
+    }
+
+    setLoading(true);
+    setMessage("Uploading...");
+
+    const formData = new FormData();
+    formData.append("video", file);
+
+    try {
+        const response = await fetch("http://127.0.0.1:5000/upload", {
+            method: "POST",
+            body: formData,
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to upload video.");
         }
 
-        console.log("Uploading video:", file.name);
-        setLoading(true);
-        setMessage("Uploading...");
-
-        const formData = new FormData();
-        formData.append("video", file);
-
-        try {
-            console.log("Sending request to backend...");
-            const response = await fetch("http://127.0.0.1:5000/upload", {
-                method: "POST",
-                body: formData,
-            });
-
-            if (!response.ok) {
-                throw new Error("Failed to upload video.");
-            }
-
-            const result = await response.json();
-            console.log("Response received:", result);
-            setMessage(result.cheating_detected ? "🚨 Cheating Detected!" : "✅ No Cheating Detected.");
-        } catch (error) {
-            console.error("Error uploading video:", error);
-            setMessage("❌ Upload failed. Please try again.");
-        } finally {
-            console.log("Upload process completed.");
-            setLoading(false);
-        }
-    };
+        const result = await response.json();
+        setMessage(result.cheating_detected ? "🚨 Cheating Detected!" : "✅ No Cheating Detected.");
+        
+        // Store the analysis details in context
+        setAnalysisDetails(result.details);
+        
+    } catch (error) {
+        console.error("Error uploading video:", error);
+        setMessage("❌ Upload failed. Please try again.");
+    } finally {
+        setLoading(false);
+    }
+};
 
     return (
         <div className="upload-container">

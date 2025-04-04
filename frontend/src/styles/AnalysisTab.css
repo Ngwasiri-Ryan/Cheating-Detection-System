@@ -1,0 +1,123 @@
+/* AnalysisTab.css */
+
+.analysis-container {
+    max-width: 800px;
+  }
+  
+  .loading {
+    text-align: center;
+    margin-top: 30%;
+  }
+  
+  .no-analysis {
+    text-align: center;
+    justify-content: center;
+    padding: 40px;
+    background-color: white;
+  }
+  
+  .no-analysis-img {
+    width: 300px;
+    margin-bottom: 10px;
+    margin-top: 20px;
+  }
+  
+  .no-analysis p {
+    font-size: 18px;
+    color: #888;
+  }
+
+  /* Analysis Results */
+  .analysis-results {
+    margin-top: 20px;
+  }
+  
+
+  .analysis-results h3 {
+    font-size: 22px;
+    color: #333;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  
+  .reasons-section {
+    background: #f8f9fa;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+  }
+  
+  .reasons-section h4 {
+    font-size: 18px;
+    margin-bottom: 8px;
+    color: #5e63ff;
+  }
+  
+  .reasons-section ul {
+    padding-left: 20px;
+  }
+  
+  .reasons-section li {
+    font-size: 16px;
+    margin-bottom: 5px;
+  }
+  
+  /* Statistics Grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+    margin-top: 15px;
+  }
+  
+  .stat-card {
+    background: #f1f3f5;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .stat-card:hover {
+    transform: translateY(-3px);
+  }
+  
+  .stat-card h4 {
+    font-size: 16px;
+    color: #5e63ff;
+    margin-bottom: 8px;
+  }
+  
+  .stat-value {
+    font-size: 20px;
+    font-weight: bold;
+    color: #222;
+  }
+  
+  .stat-subtitle {
+    font-size: 14px;
+    color: #777;
+  }
+  
+  /* Raw Data */
+  .raw-data {
+    margin-top: 15px;
+  }
+  
+  .raw-data summary {
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    color: #5e63ff;
+  }
+  
+  .raw-data pre {
+    background: #272727;
+    color: #ffffff;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    overflow-x: auto;
+    margin-top: 10px;
+  }
+  
